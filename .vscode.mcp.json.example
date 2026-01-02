@@ -1,0 +1,13 @@
+{
+  "mcp.servers": {
+    "k8s-readonly": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/k8s-mcp-read-assistant/dist/index.js"
+      ],
+      "env": {
+        "KUBECONFIG": "/absolute/path/to/k8s-mcp-read-assistant/kubeconfig-readonly.yaml"
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "k8s-mcp-read-assistant",
+  "version": "0.1.0",
+  "description": "MCP server for read-only Kubernetes cluster access - perfect for AI-powered debugging and monitoring",
+  "author": "Your Name <nicolas.mosquerar@hotmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nmosquerar/k8s-mcp-read-assistant.git"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "kubernetes",
+    "k8s",
+    "kubectl",
+    "debugging",
+    "ai",
+    "claude",
+    "copilot",
+    "readonly"
+  ],
+  "type": "module",
+  "bin": {
+    "k8s-mcp-read-assistant": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.4.0"
+  }
+}

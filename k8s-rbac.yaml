@@ -1,0 +1,39 @@
+---
+# ServiceAccount para el MCP
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mcp-readonly-user
+  namespace: default
+
+---
+# ClusterRole con permisos de solo lectura para pods
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: mcp-pod-reader
+rules:
+  # Permisos para leer pods
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "pods/status"]
+    verbs: ["get", "list", "watch"]
+  
+  # Permisos para leer namespaces (necesario para listar pods por namespace)
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list"]
+
+---
+# ClusterRoleBinding - vincula el ServiceAccount con el ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: mcp-pod-reader-binding
+subjects:
+  - kind: ServiceAccount
+    name: mcp-readonly-user
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: mcp-pod-reader
+  apiGroup: rbac.authorization.k8s.io

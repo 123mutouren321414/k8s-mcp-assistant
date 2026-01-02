@@ -1,0 +1,42 @@
+# Dependencias
+node_modules/
+package-lock.json
+
+# Build output
+dist/
+*.js
+*.js.map
+
+# Kubeconfig - NUNCA subir esto (contiene tokens)
+kubeconfig-readonly.yaml
+kubeconfig*.yaml
+*.kubeconfig
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/*
+!.vscode/mcp.json.example
+.idea/
+*.swp
+*.swo
+
+# Temporal
+tmp/
+temp/
+*.tmp
+
+# scripts
+
+*.sh
