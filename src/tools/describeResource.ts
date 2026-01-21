@@ -1,20 +1,20 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile); 
 
 type ResourceType = "pod" | "deployment" | "service" | "configmap" | "secret" | "ingress" | "pvc" | "node";
 
 export async function describeResource(namespace: string, resourceType: ResourceType, resourceName: string) {
     try {
-        let cmd = `kubectl describe ${resourceType} ${resourceName}`;
+        const args = [resourceType, resourceName];
         
         // Some resources don't require namespace (like nodes)
         if (resourceType !== 'node') {
-            cmd += ` -n ${namespace}`;
+            args.push('-n', namespace);
         }
         
-        const { stdout } = await execAsync(cmd);
+        const { stdout } = await execFileAsync('kubectl', args);
         
         return {
             success: true,
