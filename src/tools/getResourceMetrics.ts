@@ -1,16 +1,16 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export async function getResourceMetrics(namespace: string, podName?: string) {
     try {
-        let cmd = `kubectl top pods -n ${namespace}`;
+        const args = ['top', 'pods', '-n', namespace];
         if (podName) {
-            cmd += ` ${podName}`;
+            args.push(podName);
         }
         
-        const { stdout } = await execAsync(cmd);
+        const { stdout } = await execFileAsync('kubectl', args);
         
         // Parse the kubectl top output
         const lines = stdout.trim().split('\n');
