@@ -1,13 +1,13 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export async function getEvents(namespace: string, resourceName?: string, type?: "Normal" | "Warning") {
     try {
-        let cmd = `kubectl get events -n ${namespace} -o json --sort-by='.lastTimestamp'`;
+        const args = ['get', 'events', '-n', namespace, '-o', 'json', '--sort-by=.lastTimestamp'];
         
-        const { stdout } = await execAsync(cmd);
+        const { stdout } = await execFileAsync('kubectl', args);
         const data = JSON.parse(stdout);
         
         let events = data.items;
