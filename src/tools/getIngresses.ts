@@ -1,13 +1,13 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export async function getIngresses(namespace: string, hostname?: string) {
     try {
-        const cmd = `kubectl get ingresses -n ${namespace} -o json`;
+        const args = ['get', 'ingresses', '-n', namespace, '-o', 'json'];
         
-        const { stdout } = await execAsync(cmd);
+        const { stdout } = await execFileAsync('kubectl', args);
         const data = JSON.parse(stdout);
         
         let ingresses = data.items;
