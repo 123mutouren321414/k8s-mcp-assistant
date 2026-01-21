@@ -1,16 +1,17 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export async function getConfigMaps(namespace: string, name?: string) {
     try {
-        let cmd = `kubectl get configmaps -n ${namespace} -o json`;
+        const args = ['get', 'configmaps', '-n', namespace, '-o', 'json'];
         if (name) {
-            cmd = `kubectl get configmap ${name} -n ${namespace} -o json`;
+            args[1] = 'configmap';
+            args.splice(2, 0, name);
         }
         
-        const { stdout } = await execAsync(cmd);
+        const { stdout } = await execFileAsync('kubectl', args); 
         const data = JSON.parse(stdout);
         
         // Handle single configmap vs list of configmaps
