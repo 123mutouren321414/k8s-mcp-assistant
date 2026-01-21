@@ -1,7 +1,7 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export interface PodInfo {
   namespace: string;
@@ -35,20 +35,20 @@ export async function getPodInfo(
     // Si 'app' es "*", listar todos los pods
     // Si 'app' parece ser un nombre completo de pod, usar ese nombre
     // Si no, buscar por label app=<app>
-    let getPodsCommand: string;
+    let getPodsCommand: string[];
     
     if (app === '*' || app === 'all') {
       // Listar todos los pods del namespace
-      getPodsCommand = `kubectl get pods -n ${namespace} -o wide`;
+      getPodsCommand = ['get', 'pods', '-n', namespace, '-o', 'wide'];
     } else if (app.includes('-')) {
       // Probablemente es un nombre de pod completo
-      getPodsCommand = `kubectl get pods ${app} -n ${namespace} -o wide`;
+      getPodsCommand = ['get', 'pods', app, '-n', namespace, '-o', 'wide'];
     } else {
       // Buscar por label
-      getPodsCommand = `kubectl get pods -n ${namespace} -l app=${app} -o wide`;
+      getPodsCommand = ['get', 'pods', '-n', namespace, '-l', `app=${app}`, '-o', 'wide'];
     }
 
-    const { stdout: podsListOutput, stderr: getPodsError } = await execAsync(getPodsCommand);
+    const { stdout: podsListOutput, stderr: getPodsError } = await execFileAsync('kubectl', getPodsCommand);
     
     if (getPodsError && getPodsError.trim()) {
       console.warn('Warning getting pods:', getPodsError);
@@ -65,8 +65,8 @@ export async function getPodInfo(
     // 3. Describir cada pod
     for (const podName of podNames) {
       try {
-        const describeCommand = `kubectl describe pod ${podName} -n ${namespace}`;
-        const { stdout: describeOutput } = await execAsync(describeCommand);
+        const describeCommand = ['describe', 'pod', podName, '-n', namespace];
+        const { stdout: describeOutput } = await execFileAsync('kubectl', describeCommand);
         result.podDescriptions[podName] = describeOutput.trim();
       } catch (describeError: any) {
         result.podDescriptions[podName] = `Error describing pod: ${describeError.message}`;
