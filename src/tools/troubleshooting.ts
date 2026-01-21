@@ -1,12 +1,12 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export async function getFailedPods(namespace: string) {
     try {
-        const cmd = `kubectl get pods -n ${namespace} --field-selector=status.phase!=Running,status.phase!=Succeeded -o json`;
-        const { stdout } = await execAsync(cmd);
+        const args = ['get', 'pods', '-n', namespace, '--field-selector=status.phase!=Running,status.phase!=Succeeded', '-o', 'json'];
+        const { stdout } = await execFileAsync('kubectl', args);
         const data = JSON.parse(stdout);
         
         return {
@@ -36,8 +36,8 @@ export async function getFailedPods(namespace: string) {
 
 export async function getPendingPods(namespace: string) {
     try {
-        const cmd = `kubectl get pods -n ${namespace} --field-selector=status.phase=Pending -o json`;
-        const { stdout } = await execAsync(cmd);
+        const args = ['get', 'pods', '-n', namespace, '--field-selector=status.phase=Pending', '-o', 'json'];
+        const { stdout } = await execFileAsync('kubectl', args);
         const data = JSON.parse(stdout);
         
         return {
@@ -60,7 +60,8 @@ export async function getPendingPods(namespace: string) {
 
 export async function getRestartingPods(namespace: string, threshold: number = 5) {
     try {
-        const { stdout } = await execAsync(`kubectl get pods -n ${namespace} -o json`);
+        const args = ['get', 'pods', '-n', namespace, '-o', 'json'];  
+        const { stdout } = await execFileAsync('kubectl', args);
         const data = JSON.parse(stdout);
         
         const restartingPods = data.items.filter((pod: any) => {
@@ -98,12 +99,12 @@ export async function getRestartingPods(namespace: string, threshold: number = 5
 
 export async function getServiceEndpoints(namespace: string, serviceName: string) {
     try {
-        const svcCmd = `kubectl get svc ${serviceName} -n ${namespace} -o json`;
-        const epCmd = `kubectl get endpoints ${serviceName} -n ${namespace} -o json`;
+        const svcArgs = ['get', 'svc', serviceName, '-n', namespace, '-o', 'json'];  
+        const epArgs = ['get', 'endpoints', serviceName, '-n', namespace, '-o', 'json'];
         
-        const [svcResult, epResult] = await Promise.all([
-            execAsync(svcCmd),
-            execAsync(epCmd)
+        const [svcResult, epResult] = await Promise.all([  
+            execFileAsync('kubectl', svcArgs),  
+            execFileAsync('kubectl', epArgs)  
         ]);
         
         const svc = JSON.parse(svcResult.stdout);
