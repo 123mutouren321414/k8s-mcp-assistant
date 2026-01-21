@@ -1,16 +1,17 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export async function getServices(namespace: string, name?: string) {
     try {
-        let cmd = `kubectl get services -n ${namespace} -o json`;
+        const args = ['get', 'services', '-n', namespace, '-o', 'json'];
         if (name) {
-            cmd = `kubectl get service ${name} -n ${namespace} -o json`;
+            args[1] = 'service';
+            args.splice(2, 0, name);
         }
         
-        const { stdout } = await execAsync(cmd);
+        const { stdout } = await execFileAsync('kubectl', args); 
         const data = JSON.parse(stdout);
         
         // Handle single service vs list of services
